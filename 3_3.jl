@@ -290,7 +290,32 @@ function factor(n::T) where T <: Integer
     return (arr1,arr2)
 end
 
+function SSD(arr::Array)
+    len = length(arr)
+    Σ = 0; Σ_2 = 0;
+    for i in arr
+        Σ += i
+        Σ_2 += i*i;
+    end
+    Σ = Σ/len
+    return Σ_2 / len - Σ*Σ
+end
 
+function mean(arr::Array)
+    res = 0
+    for i in arr
+        res += i
+    end
+    return res / length(arr)
+end
+
+function SSD_2(arr::Array)
+    res = 0
+    for i in arr
+        res += (mean(arr) - i) ^ 2 / length(arr)
+    end
+    return res
+end
 
 function convert_graph1(a::Node)
     s =  "[" * string(a.index)
@@ -308,11 +333,6 @@ function convert_graph2(a::Node)
     s = s * string(a.index) * "]"
     return s
 end
-
-c = Node(42,Node[])
-b2 = Node(31,Node[])
-b1 = Node(21,[c])
-a = Node(10,[b1,b2])
 
 function unconvert_graph2(s::String)
     index = 2
@@ -387,6 +407,8 @@ function path_amount(a::Node)
     return amount
 end
 
+height_graph(a::Node) = max_path(a) + 1
+
 function find(index,a::Node)
     if(a.index == index)
         return a
@@ -400,9 +422,57 @@ function find(index,a::Node)
     return Nothing
 end
 
+function leafs_amount(a::Node)
+    if length(a.child) == 0
+        return 1
+    end
+    amount = 0
+    for i in a.child
+        amount += leafs_amount(i)
+    end
+    return amount
+end
+
+function node_amount(a::Node)
+    # if length(a.child) == 0
+    #     return 1
+    # end
+    amount = 1
+    for i in a.child
+        amount += node_amount(i)
+    end
+    return amount
+end
+
+function valent(a::Node)
+    amount = length(a.child)
+    for i in a.child
+        amount += valent(i)
+    end
+    return amount
+end
+
+function mean_path(a::Node)
+    Σ = 0
+    function body(a::Node, amount)
+        for i in a.child
+            body(i,amount+1)
+        end
+        Σ += amount
+    end
+    body(a,1)
+    return Σ / node_amount(a)
+end
+
 # d2 = unconvert_graph2(convert_graph2(a))
 # d1 = unconvert_graph1(convert_graph1(a))
 # convert_graph1(d1)
 
-max_path(a)
-path_amount(a)
+d1 = Node(51,Node[])
+d2 = Node(52,Node[])
+d3 = Node(53,Node[])
+c = Node(42,Node[d1,d2])
+b2 = Node(31,Node[])
+b1 = Node(21,[c])
+a = Node(10,[b1,b2])
+convert_graph1(a)
