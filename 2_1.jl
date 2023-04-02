@@ -60,27 +60,34 @@ end
     return y
 end
 
+# function fibanaci(n::Int)
+#     f1 = (1 + sqrt(5))/2
+#     f2 = (1 - sqrt(5))/2
+#     return((quick_pow(f1,n) - quick_pow(f2,n))/sqrt(5))
+# end
+
 function fibanaci(n::Int)
-    f1 = (1 + sqrt(5))/2
-    f2 = (1 - sqrt(5))/2
-    return((quick_pow(f1,n) - quick_pow(f2,n))/sqrt(5))
+    a = [1 1; 1 0]
+    b = [1;0]
+    return (quick_pow(a,n)*b)[1]
 end
 
-#=
-module Newton1 #из лекции
+
+module Newton1
 function newton1(r::Function, x; epsilon = 1e-8, num_max = 100)
     dx = r(x); x += dx; k=1
     while abs(dx) > epsilon && k < num_max
-        dx = r(x); x += dx; k += 1
+        dx = r(x);
+        x += dx; k += 1
     end
     abs(dx) > epsilon
     return x
 end
 Base.abs(x::AbstractVector) = maximum(abs.(x))
-end=#
+end
 
 module Newton
-function newton(f::Function, x; epsilon = 1e-8, num_max = 10)
+function newton(f::Function, x; epsilon = 1e-10, num_max = 10)
     δ = 1.0e-10
     function f_(x)
         return (f(x+δ) - f(x))/δ
@@ -95,7 +102,12 @@ function newton(f::Function, x; epsilon = 1e-8, num_max = 10)
     return x
 end
 Base.abs(x::AbstractVector) = maximum(abs.(x))
+Base.abs(x::AbstractMatrix) = maximum(abs.(x))
 end
 
-# f9(x) = x^3 -3*x^2 + 3*x^3 + 5
-# Newton.newton(f9,1) |> println
+#x^2 + y^2 = 1
+#x^3 * y = 1
+f9(a) = -([2*a[1] 2a[2]; 3*a[1]^2 1]\[1,1])
+Newton1.newton1(f9,[1,1]) |> println
+
+
