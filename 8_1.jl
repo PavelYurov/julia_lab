@@ -9,7 +9,7 @@ end
 function all_repit( m::Int, n::Int; base = 1:m, Type = Int64)
   answer =[]
   for i in 0:(n^m - 1)
-    push!(answer,base[reverse(digits(Type,i; base = n, pad = m))' .+ Type(1)])
+    push!(answer,base[reverse(digits(Type,i; base = n, pad = m)) .+ Type(1)])
   end
   return answer
 end
@@ -43,10 +43,9 @@ end
 
 function all_subsets(a::AbstractArray)
   answer =[]
-  tmp = []
-  for i in 0:2^length(a)-1
-    tmp = digits(Bool, i; base = 2, pad = length(a))
-    push!(answer,a[findall(tmp)])
+  tmp = all_repit(length(a),2;base = [false true])
+  for i in tmp
+    push!(answer,a[findall(i)])
   end
   return answer
 end
@@ -104,12 +103,12 @@ p = [false,false,false,false,false,true,true,true,true]
 # b = all_repit(3,length(a); base = a)
 # display(b)
 # all_permute!(a)
-#display(all_subsets(a))
+display(all_subsets(a))
 #display(next_indicator!([true,false,false,true]))
-while(true)
-  tmp = next_permute_ind!(p)
-  isnothing(tmp) && break
-  println(tmp)
-end
+# while(true)
+#   tmp = next_permute_ind!(p)
+#   isnothing(tmp) && break
+#   println(tmp)
+# end
 
 
